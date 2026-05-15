@@ -21,13 +21,13 @@ namespace E_Commerce.Persistence.Data.DataSeed
         {
             _dbContext = dbContext;
         }
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             try
             {
-                var HasProducts = _dbContext.Products.Any();
-                var HasBrands = _dbContext.ProductBrands.Any();
-                var HasTypes = _dbContext.ProductTypes.Any();
+                var HasProducts = await _dbContext.Products.AnyAsync();
+                var HasBrands = await _dbContext.ProductBrands.AnyAsync();
+                var HasTypes = await _dbContext.ProductTypes.AnyAsync();
 
                 if (HasProducts && HasBrands && HasTypes)
                 {
@@ -35,16 +35,16 @@ namespace E_Commerce.Persistence.Data.DataSeed
                     return;
                 }
                 if (!HasBrands)
-                    SeedDataFromJSON<ProductBrand, int>("brands.json", _dbContext.ProductBrands);
-                
-                if (!HasTypes)
-                    SeedDataFromJSON<ProductType, int>("types.json", _dbContext.ProductTypes);
+                    await SeedDataFromJSONAsync<ProductBrand, int>("brands.json", _dbContext.ProductBrands);
 
-                _dbContext.SaveChanges(); // Save changes after seeding brands and types to ensure foreign key constraints are met when seeding products
-               
+                if (!HasTypes)
+                    await SeedDataFromJSONAsync<ProductType, int>("types.json", _dbContext.ProductTypes);
+
+                await _dbContext.SaveChangesAsync(); // Save changes after seeding brands and types to ensure foreign key constraints are met when seeding products
+
                 if (!HasProducts)
-                    SeedDataFromJSON<Product, int>("products.json", _dbContext.Products);
-                _dbContext.SaveChanges(); // Save changes after seeding products
+                    await SeedDataFromJSONAsync<Product, int>("products.json", _dbContext.Products);
+                await _dbContext.SaveChangesAsync(); // Save changes after seeding products
 
             }
             catch (Exception ex)
@@ -54,26 +54,26 @@ namespace E_Commerce.Persistence.Data.DataSeed
             }
         }
 
-        private void SeedDataFromJSON<T, TKey>(string fileName, DbSet<T> dbset) where T : BaseEntity<TKey>
+        private async Task SeedDataFromJSONAsync<T, TKey>(string fileName, DbSet<T> dbset) where T : BaseEntity<TKey>
         {
             //D:\Route_2025\09 ASP.NET Core Web APIs\ECommerce.WebAPI\ECommerce.Web Solution\E Commerce.Persistence\Data\DataSeed\JSONFiles\
 
             var FilePath = @"..\E Commerce.Persistence\Data\DataSeed\JSONFiles\" + fileName;
 
             if (!File.Exists(FilePath)) throw new FileNotFoundException($"The file {fileName} was not found at path {FilePath}.");
-          
-        
+
+
             try
             {
                 using var dataStream = File.OpenRead(FilePath);
-                var data = JsonSerializer.Deserialize<List<T>>(dataStream, new JsonSerializerOptions()
+                var data = await JsonSerializer.DeserializeAsync<List<T>>(dataStream, new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
                 if (data is not null)
                 {
-                    dbset.AddRange(data);
+                    await dbset.AddRangeAsync(data);
                 }
             }
             catch (Exception ex)

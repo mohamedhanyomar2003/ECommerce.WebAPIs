@@ -9,12 +9,12 @@ namespace ECommerce.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            #region Add services to the container.
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -23,16 +23,20 @@ namespace ECommerce.Web
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddScoped<IDataInitializer, DataInitializer>();
+            builder.Services.AddScoped<IDataInitializer, DataInitializer>(); 
+            #endregion
 
             var app = builder.Build();
 
             #region Data Seeding || MigrateDatabase
 
-            app.MigrateDatabase().
-                SeedDatabase();
+            await app.MigrateDatabaseAsync();
+            await app.SeedDatabaseAsync();
 
             #endregion
+
+            #region Configure the HTTP request pipeline.
+            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -45,9 +49,10 @@ namespace ECommerce.Web
             app.UseAuthorization();
 
 
-            app.MapControllers();
+            app.MapControllers(); 
+            #endregion
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
