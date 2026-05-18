@@ -27,9 +27,13 @@ namespace ECommerce.Web
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddScoped<IDataInitializer, DataInitializer>(); 
-            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-            builder.Services.AddAutoMapper(X=>X.AddProfile<ProductProfile>());
+            builder.Services.AddScoped<IDataInitializer, DataInitializer>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+            builder.Services.AddAutoMapper(typeof(ServicesAssembelyReference).Assembly);
+            //builder.Services.AddTransient<ProductPictureUrlResolver>();
+
             builder.Services.AddScoped<IProductService, ProductService>();
             #endregion
 
@@ -43,7 +47,7 @@ namespace ECommerce.Web
             #endregion
 
             #region Configure the HTTP request pipeline.
-            
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -53,10 +57,12 @@ namespace ECommerce.Web
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseAuthorization();
 
 
-            app.MapControllers(); 
+            app.MapControllers();
             #endregion
 
             await app.RunAsync();
