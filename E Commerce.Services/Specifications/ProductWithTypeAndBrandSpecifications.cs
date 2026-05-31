@@ -10,7 +10,12 @@ namespace E_Commerce.Services.Specifications
 {
     internal class ProductWithTypeAndBrandSpecifications:BaseSpecifications<Product,int>
     {
-        public ProductWithTypeAndBrandSpecifications():base()
+        public ProductWithTypeAndBrandSpecifications(int id):base(p => p.Id == id)
+        {
+            AddInclude(p => p.ProductType);
+            AddInclude(p => p.ProductBrand);
+        }
+        public ProductWithTypeAndBrandSpecifications():base(null)
         {
             AddInclude(p=>p.ProductType);
             AddInclude(p=>p.ProductBrand);

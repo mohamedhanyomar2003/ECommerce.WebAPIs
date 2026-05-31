@@ -10,21 +10,28 @@ namespace E_Commerce.Persistence
 {
     public class SpecificationsEvaluator
     {
+        // Create Query - Build Query
         public static IQueryable<TEntity> CreateQuery<TEntity, Tkey>(IQueryable<TEntity> EntryPoint,
               ISpecifications<TEntity, Tkey> specifications) where TEntity : BaseEntity<Tkey>
         {
-            var Query = EntryPoint;
+            var Query = EntryPoint; // _dbcontext.products
 
             if (specifications is not null)
             {
+
+                if (specifications.Criteria is not null)
+                {
+                    Query = Query.Where(specifications.Criteria); //_dbcontext.products.Where()
+                }
+
                 if (specifications.IncludeExpressions is not null && specifications.IncludeExpressions.Any())
                 {
-                    Query = specifications.IncludeExpressions.Aggregate(Query, 
+                    Query = specifications.IncludeExpressions.Aggregate(Query,
                         (CurrentQuery, IncludeExp) => CurrentQuery.Include(IncludeExp));
                 }
             }
             return Query;
         }
-        
+
     }
 }
