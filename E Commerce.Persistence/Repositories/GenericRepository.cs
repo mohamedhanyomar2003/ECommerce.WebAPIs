@@ -24,5 +24,9 @@ namespace E_Commerce.Persistence.Repositories
         public void Update(TEntity entity) => _dbContext.Set<TEntity>().Update(entity);
         public void Delete(TEntity entity) => _dbContext.Set<TEntity>().Remove(entity);
 
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationsEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).ToListAsync();
+        }
     }
 }
