@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Services.Specifications
 {
-    internal class ProductWithTypeAndBrandSpecifications:BaseSpecifications<Product,int>
+    internal class ProductWithTypeAndBrandSpecifications : BaseSpecifications<Product, int>
     {
-        public ProductWithTypeAndBrandSpecifications(int id):base(p => p.Id == id)
+        public ProductWithTypeAndBrandSpecifications(int id) : base(p => p.Id == id)
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
         }
-        public ProductWithTypeAndBrandSpecifications():base(null)
+        public ProductWithTypeAndBrandSpecifications(int? brandId, int? typeId)
+            : base(p => (!brandId.HasValue || p.BrandId == brandId.Value)
+            && (!typeId.HasValue || p.TypeId == typeId.Value))
         {
-            AddInclude(p=>p.ProductType);
-            AddInclude(p=>p.ProductBrand);
+            AddInclude(p => p.ProductType);
+            AddInclude(p => p.ProductBrand);
         }
-       
+
     }
 }

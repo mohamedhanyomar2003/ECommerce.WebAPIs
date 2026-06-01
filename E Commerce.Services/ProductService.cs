@@ -27,10 +27,10 @@ namespace E_Commerce.Services
             return _mapper.Map<IEnumerable<BrandDTO>>(Brands);
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync(int? brandId, int? typeId)
         {
             // Specifications=> GetAll Products Including ProductType,ProductBrand
-            var Spec = new ProductWithTypeAndBrandSpecifications();
+            var Spec = new ProductWithTypeAndBrandSpecifications(brandId, typeId);
             var products = await _unitOfWork.GetRepository<Product, int>().GetAllAsync(Spec);
             return _mapper.Map<IEnumerable<ProductDTO>>(products);
         }
