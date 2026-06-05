@@ -8,13 +8,17 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Domain.Contracts
 {
-    public interface ISpecifications<TEntity,Tkey>where TEntity : BaseEntity<Tkey>
+    public interface ISpecifications<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
     {
-        public ICollection<Expression<Func<TEntity,object>>> IncludeExpressions { get; }
+        public ICollection<Expression<Func<TEntity, object>>> IncludeExpressions { get; }
 
-        public Expression<Func<TEntity,bool>> Criteria { get; }
+        public Expression<Func<TEntity, bool>> Criteria { get; }
 
-        public Expression<Func<TEntity,object>> OrderBy { get; }
-        public Expression<Func<TEntity,object>> OrderByDescending { get; }
+        public Expression<Func<TEntity, object>> OrderBy { get; }
+        public Expression<Func<TEntity, object>> OrderByDescending { get; }
+        public int Skip { get; }
+        public int Take { get; }
+        public bool IsPaginated { get; } 
+
     }
 }
