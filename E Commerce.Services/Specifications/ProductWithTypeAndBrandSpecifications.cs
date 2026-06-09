@@ -17,9 +17,7 @@ namespace E_Commerce.Services.Specifications
             AddInclude(p => p.ProductBrand);
         }
         public ProductWithTypeAndBrandSpecifications(ProductQueryParams queryParams)
-            : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId.Value)
-            && (!queryParams.TypeId.HasValue || p.TypeId == queryParams.TypeId.Value)
-            && (string.IsNullOrEmpty(queryParams.Search) || p.Name.ToLower().Contains(queryParams.Search.ToLower())))
+            : base(ProductSpecificationsHelper.GetProductCriteria(queryParams))
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
